@@ -1,0 +1,47 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: trigger-template
+spec:
+  params:
+    - name: aDefaultEmptyValue
+      default: ''
+    - name: anEmptyValueFromBinding
+    - name: anEmptyValueFromEnvProperty
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1alpha1
+      kind: PipelineRun
+      metadata:
+        name: pipelinerun-$(uid)
+      spec:
+        pipelineRef:
+          name: pipeline
+        params:
+        - name: pipeline-pvc
+          value: pipelinerun-$(uid)-pvc
+        - name: aDefaultEmptyValue
+          value: $(params.aDefaultEmptyValue)
+        - name: anEmptyValueFromBinding
+          value: $(params.anEmptyValueFromBinding)
+        - name: anEmptyValueFromEnvProperty
+          value: $(params.anEmptyValueFromEnvProperty)
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: trigger-binding
+spec:
+  params:
+    - name: anEmptyValueFromBinding
+      value: ""
+---
+apiVersion: tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: event-listener
+spec:
+  triggers:
+    - binding:
+        name: trigger-binding
+      template:
+        name: trigger-template        

@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: pipeline
+spec:
+  params:
+    - name: pipeline-pvc
+    - name: aDefaultEmptyValue
+    - name: anEmptyValueFromBinding
+    - name: anEmptyValueFromEnvProperty
+  tasks:
+    - name: pipeline-task
+      taskRef:
+        name: the-task
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: aDefaultEmptyValue
+          value: $(params.aDefaultEmptyValue)
+        - name: anEmptyValueFromBinding
+          value: $(params.anEmptyValueFromBinding)
+        - name: anEmptyValueFromEnvProperty
+          value: $(params.anEmptyValueFromEnvProperty)
